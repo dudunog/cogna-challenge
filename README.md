@@ -1,1 +1,1 @@
-"# cogna-challenge" 
+# cogna-challenge
