@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { DatabaseService } from '../database/database.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { createMockUser } from 'test/mocks/mock-user';
 
 describe('UserService', () => {
