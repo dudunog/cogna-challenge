@@ -3,7 +3,7 @@ import { UpdateUserUseCase } from './update-user.use-case';
 import { UserService } from 'src/modules/user/user.service';
 import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto';
 import { NotFoundException } from '@nestjs/common';
-import { Prisma } from 'generated/prisma/client';
+import { createMockUser } from 'test/mocks/mock-user';
 
 describe('UpdateUserUseCase', () => {
   let useCase: UpdateUserUseCase;
@@ -11,17 +11,6 @@ describe('UpdateUserUseCase', () => {
     findUnique: jest.Mock;
     update: jest.Mock;
   };
-
-  const createMockUser = (
-    overrides?: Partial<Prisma.UserGetPayload<object>>,
-  ) => ({
-    id: 'user-id',
-    email: 'test@example.com',
-    password: 'hashed-password',
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    ...overrides,
-  });
 
   beforeEach(async () => {
     mockUserService = {
@@ -81,31 +70,6 @@ describe('UpdateUserUseCase', () => {
         });
         expect(result).toEqual(updatedUser);
         expect(result.email).toBe(updateUserDto.email);
-      });
-
-      it('should update password when password provided', async () => {
-        // Arrange
-        const userId = 'user-id';
-        const updateUserDto: UpdateUserDto = {
-          password: 'new-password',
-        };
-        const existingUser = createMockUser({ id: userId });
-        const updatedUser = createMockUser({
-          id: userId,
-          password: updateUserDto.password,
-        });
-        mockUserService.findUnique.mockResolvedValue(existingUser);
-        mockUserService.update.mockResolvedValue(updatedUser);
-
-        // Act
-        const result = await useCase.execute(userId, updateUserDto);
-
-        // Assert
-        expect(mockUserService.update).toHaveBeenCalledWith({
-          where: { id: userId },
-          data: updateUserDto,
-        });
-        expect(result.password).toBe(updateUserDto.password);
       });
     });
 

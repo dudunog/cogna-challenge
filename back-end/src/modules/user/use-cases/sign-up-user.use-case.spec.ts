@@ -1,25 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserUseCase } from './create-user.use-case';
+import { SignUpUserUseCase } from './sign-up-user.use-case';
 import { UserService } from 'src/modules/user/user.service';
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { Prisma } from 'generated/prisma/client';
+import { SignUpUserDto } from 'src/modules/user/dto/sign-up-user.dto';
+import { createMockUser } from 'test/mocks/mock-user';
 
-describe('CreateUserUseCase', () => {
-  let useCase: CreateUserUseCase;
+describe('SignUpUserUseCase', () => {
+  let useCase: SignUpUserUseCase;
   let mockUserService: {
     create: jest.Mock;
   };
-
-  const createMockUser = (
-    overrides?: Partial<Prisma.UserGetPayload<object>>,
-  ) => ({
-    id: 'user-id',
-    email: 'test@example.com',
-    password: 'hashed-password',
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    ...overrides,
-  });
 
   beforeEach(async () => {
     mockUserService = {
@@ -28,7 +17,7 @@ describe('CreateUserUseCase', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CreateUserUseCase,
+        SignUpUserUseCase,
         {
           provide: UserService,
           useValue: mockUserService,
@@ -36,7 +25,7 @@ describe('CreateUserUseCase', () => {
       ],
     }).compile();
 
-    useCase = module.get<CreateUserUseCase>(CreateUserUseCase);
+    useCase = module.get<SignUpUserUseCase>(SignUpUserUseCase);
   });
 
   afterEach(() => {
@@ -51,32 +40,34 @@ describe('CreateUserUseCase', () => {
     describe('successful creation', () => {
       it('should create user and return created user data', async () => {
         // Arrange
-        const createUserDto: CreateUserDto = {
+        const signUpUserDto: SignUpUserDto = {
+          name: 'Test User',
           email: 'test@example.com',
           password: 'password123',
         };
         const expectedUser = createMockUser({
-          email: createUserDto.email,
+          email: signUpUserDto.email,
         });
         mockUserService.create.mockResolvedValue(expectedUser);
 
         // Act
-        const result = await useCase.execute(createUserDto);
+        const result = await useCase.execute(signUpUserDto);
 
         // Assert
         expect(mockUserService.create).toHaveBeenCalledTimes(1);
         expect(mockUserService.create).toHaveBeenCalledWith({
-          data: createUserDto,
+          data: signUpUserDto,
         });
         expect(result).toEqual(expectedUser);
-        expect(result.email).toBe(createUserDto.email);
+        expect(result.email).toBe(signUpUserDto.email);
       });
     });
 
     describe('error handling', () => {
       it('should propagate unique constraint violation errors', async () => {
         // Arrange
-        const createUserDto: CreateUserDto = {
+        const signUpUserDto: SignUpUserDto = {
+          name: 'Test User',
           email: 'existing@example.com',
           password: 'password123',
         };
@@ -84,7 +75,7 @@ describe('CreateUserUseCase', () => {
         mockUserService.create.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(createUserDto)).rejects.toThrow(
+        await expect(useCase.execute(signUpUserDto)).rejects.toThrow(
           'Unique constraint violation',
         );
         expect(mockUserService.create).toHaveBeenCalledTimes(1);
@@ -92,7 +83,8 @@ describe('CreateUserUseCase', () => {
 
       it('should propagate database errors', async () => {
         // Arrange
-        const createUserDto: CreateUserDto = {
+        const signUpUserDto: SignUpUserDto = {
+          name: 'Test User',
           email: 'test@example.com',
           password: 'password123',
         };
@@ -100,7 +92,7 @@ describe('CreateUserUseCase', () => {
         mockUserService.create.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(createUserDto)).rejects.toThrow(
+        await expect(useCase.execute(signUpUserDto)).rejects.toThrow(
           'Database connection failed',
         );
         expect(mockUserService.create).toHaveBeenCalledTimes(1);

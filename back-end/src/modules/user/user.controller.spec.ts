@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
-import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { CreateUserUseCase } from './use-cases/sign-up-user.use-case';
 import { FindUserUseCase } from './use-cases/find-user.use-case';
 import { FindUsersUseCase } from './use-cases/find-users.use-case';
 import { UpdateUserUseCase } from './use-cases/update-user.use-case';
 import { DeleteUserUseCase } from './use-cases/delete-user.use-case';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 

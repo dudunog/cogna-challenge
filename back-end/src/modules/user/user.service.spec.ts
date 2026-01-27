@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { DatabaseService } from '../database/database.service';
-import { Prisma } from 'generated/prisma/client';
+import { createMockUser } from 'test/mocks/mock-user';
 
 describe('UserService', () => {
   let service: UserService;
@@ -15,17 +15,6 @@ describe('UserService', () => {
       delete: jest.Mock;
     };
   };
-
-  const createMockUser = (
-    overrides?: Partial<Prisma.UserGetPayload<object>>,
-  ) => ({
-    id: 'test-id',
-    email: 'test@example.com',
-    password: 'hashed-password',
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-    ...overrides,
-  });
 
   const createMockUserWithTasks = () => ({
     ...createMockUser(),
@@ -228,6 +217,7 @@ describe('UserService', () => {
 
   describe('create', () => {
     const mockUserData = {
+      name: 'Test User',
       email: 'test@example.com',
       password: 'hashed-password',
     };
@@ -281,7 +271,7 @@ describe('UserService', () => {
         // Arrange
         const include = { tasks: true };
         const expectedUser = {
-          ...createMockUser(mockWhere),
+          ...createMockUser({ id: mockWhere.id }),
           ...mockUpdateData,
           tasks: [],
         };
