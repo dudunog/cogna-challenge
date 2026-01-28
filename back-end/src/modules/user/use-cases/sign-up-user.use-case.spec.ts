@@ -8,11 +8,13 @@ describe('SignUpUserUseCase', () => {
   let useCase: SignUpUserUseCase;
   let mockUserService: {
     create: jest.Mock;
+    findUnique: jest.Mock;
   };
 
   beforeEach(async () => {
     mockUserService = {
       create: jest.fn(),
+      findUnique: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -48,37 +50,50 @@ describe('SignUpUserUseCase', () => {
         const expectedUser = createMockUser({
           email: signUpUserDto.email,
         });
+        mockUserService.findUnique.mockResolvedValue(null);
         mockUserService.create.mockResolvedValue(expectedUser);
 
         // Act
         const result = await useCase.execute(signUpUserDto);
 
         // Assert
+        expect(mockUserService.findUnique).toHaveBeenCalledWith({
+          where: { email: signUpUserDto.email },
+        });
         expect(mockUserService.create).toHaveBeenCalledTimes(1);
         expect(mockUserService.create).toHaveBeenCalledWith({
-          data: signUpUserDto,
+          data: {
+            email: signUpUserDto.email,
+            name: signUpUserDto.name,
+            password: expect.any(String),
+          },
         });
-        expect(result).toEqual(expectedUser);
+        const createCall = mockUserService.create.mock.calls[0] as [
+          { data: { password: string } },
+        ];
+        expect(createCall[0].data.password).not.toBe(signUpUserDto.password);
         expect(result.email).toBe(signUpUserDto.email);
       });
     });
 
     describe('error handling', () => {
-      it('should propagate unique constraint violation errors', async () => {
+      it('should throw ConflictException when user already exists', async () => {
         // Arrange
         const signUpUserDto: SignUpUserDto = {
           name: 'Test User',
           email: 'existing@example.com',
           password: 'password123',
         };
-        const error = new Error('Unique constraint violation');
-        mockUserService.create.mockRejectedValue(error);
+        mockUserService.findUnique.mockResolvedValue(
+          createMockUser({ email: signUpUserDto.email }),
+        );
 
         // Act & Assert
         await expect(useCase.execute(signUpUserDto)).rejects.toThrow(
-          'Unique constraint violation',
+          'User with this email already exists',
         );
-        expect(mockUserService.create).toHaveBeenCalledTimes(1);
+        expect(mockUserService.findUnique).toHaveBeenCalledTimes(1);
+        expect(mockUserService.create).not.toHaveBeenCalled();
       });
 
       it('should propagate database errors', async () => {
@@ -88,6 +103,7 @@ describe('SignUpUserUseCase', () => {
           email: 'test@example.com',
           password: 'password123',
         };
+        mockUserService.findUnique.mockResolvedValue(null);
         const error = new Error('Database connection failed');
         mockUserService.create.mockRejectedValue(error);
 

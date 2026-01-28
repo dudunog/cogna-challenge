@@ -319,7 +319,7 @@ describe('UserService', () => {
     describe('successful deletion', () => {
       it('should delete user and return deleted user data', async () => {
         // Arrange
-        const expectedDeletedUser = createMockUser();
+        const expectedDeletedUser = createMockUser({ id: mockWhere.id });
         mockDatabaseService.user.delete.mockResolvedValue(expectedDeletedUser);
 
         // Act
