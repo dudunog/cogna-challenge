@@ -65,24 +65,46 @@
   },
   "jest": {
     "moduleFileExtensions": [
+      "ts",
       "js",
-      "json",
-      "ts"
+      "json"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+    "rootDir": ".",
+    "testRegex": "src/.*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^generated/.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "module": "commonjs",
+            "esModuleInterop": true,
+            "allowSyntheticDefaultImports": true
+          }
+        }
+      ],
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "esModuleInterop": true,
+            "allowSyntheticDefaultImports": true
+          }
+        }
+      ]
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@prisma|prisma)/)"
     ],
-    "coverageDirectory": "../coverage",
+    "collectCoverageFrom": [
+      "src/**/*.(t|j)s"
+    ],
+    "coverageDirectory": "coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^generated/(.*)$": "<rootDir>/../generated/$1",
-      "^src/(.*)$": "<rootDir>/$1",
-      "^test/(.*)$": "<rootDir>/../test/$1"
+      "^generated/(.*)\\.js$": "<rootDir>/generated/$1.ts",
+      "^generated/(.*)$": "<rootDir>/generated/$1",
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^test/(.*)$": "<rootDir>/test/$1"
     }
   }
 }

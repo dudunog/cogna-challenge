@@ -1,9 +1,23 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": ["ts", "js", "json"],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "esModuleInterop": true,
+          "allowSyntheticDefaultImports": true
+        }
+      }
+    ]
+  },
+  "moduleNameMapper": {
+    "^generated/(.*)\\.js$": "<rootDir>/../generated/$1.ts",
+    "^generated/(.*)$": "<rootDir>/../generated/$1",
+    "^src/(.*)$": "<rootDir>/../src/$1",
+    "^test/(.*)$": "<rootDir>/$1"
   }
 }

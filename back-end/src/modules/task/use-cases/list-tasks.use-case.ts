@@ -1,0 +1,19 @@
+import { Injectable } from '@nestjs/common';
+import { TaskService } from 'src/modules/task/task.service';
+import { Prisma } from 'generated/prisma/client';
+
+@Injectable()
+export class ListTasksUseCase {
+  constructor(private readonly taskService: TaskService) {}
+
+  async execute(params?: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.TaskWhereUniqueInput;
+    where?: Prisma.TaskWhereInput;
+    orderBy?: Prisma.TaskOrderByWithRelationInput;
+    include?: Prisma.TaskInclude;
+  }) {
+    return this.taskService.findMany(params ?? {});
+  }
+}
