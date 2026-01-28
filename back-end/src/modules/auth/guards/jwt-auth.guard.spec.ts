@@ -1,0 +1,27 @@
+import { JwtAuthGuard } from './jwt-auth.guard';
+
+describe('JwtAuthGuard', () => {
+  let guard: JwtAuthGuard;
+
+  beforeEach(() => {
+    guard = new JwtAuthGuard();
+  });
+
+  it('should be defined', () => {
+    expect(guard).toBeDefined();
+  });
+
+  it('should extend AuthGuard', () => {
+    expect(guard).toBeInstanceOf(JwtAuthGuard);
+  });
+
+  it('should have canActivate method inherited from AuthGuard', () => {
+    expect(guard.canActivate).toBeDefined();
+    expect(typeof guard.canActivate).toBe('function');
+  });
+
+  it('should have handleRequest method inherited from AuthGuard', () => {
+    expect(guard.handleRequest).toBeDefined();
+    expect(typeof guard.handleRequest).toBe('function');
+  });
+});

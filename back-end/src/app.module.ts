@@ -5,7 +5,7 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [DatabaseModule, UserModule],
-  controllers: [AppController],
   providers: [],
+  controllers: [AppController],
 })
 export class AppModule {}
