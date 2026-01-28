@@ -10,8 +10,10 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Prisma, TaskStatus } from 'generated/prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CreateTaskUseCase } from './use-cases/create-task.use-case';
@@ -21,6 +23,7 @@ import { UpdateTaskUseCase } from './use-cases/update-task.use-case';
 import { DeleteTaskUseCase } from './use-cases/delete-task.use-case';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TaskController {
   constructor(
     private readonly createTaskUseCase: CreateTaskUseCase,
