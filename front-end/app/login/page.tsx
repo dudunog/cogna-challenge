@@ -14,7 +14,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 import { ListTodo } from "lucide-react";
@@ -27,7 +26,7 @@ export default function LoginPage() {
 
   const canSubmit = email.trim() !== "" && password !== "";
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const result = await login({ email, password });
     if (result.success) {

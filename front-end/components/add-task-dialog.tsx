@@ -62,7 +62,7 @@ export function AddTaskDialog({
     }
   }, [open, task]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const trimmedTitle = title.trim();

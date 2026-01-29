@@ -25,7 +25,7 @@ export default function CadastroPage() {
   const canSubmit =
     name.trim() !== "" && email.trim() !== "" && password.length >= 6;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const result = await register({ name, email, password });
     if (result.success) {
