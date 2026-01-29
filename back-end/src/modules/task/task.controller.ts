@@ -12,9 +12,9 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { TaskStatus } from 'generated/prisma/client';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { TaskStatus } from 'src/common/types/enums/task-status.enum';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CreateTaskUseCase } from './use-cases/create-task.use-case';

@@ -3,7 +3,7 @@ import { CreateTaskUseCase } from './create-task.use-case';
 import { TaskService } from 'src/modules/task/task.service';
 import { CreateTaskDto } from 'src/modules/task/dto/create-task.dto';
 import { createMockTask } from 'test/mocks/mock-task';
-import { TaskStatus } from 'generated/prisma/client';
+import { TaskStatus } from 'src/common/types/enums/task-status.enum';
 
 describe('CreateTaskUseCase', () => {
   let useCase: CreateTaskUseCase;

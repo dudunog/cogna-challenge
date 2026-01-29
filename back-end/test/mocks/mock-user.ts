@@ -1,8 +1,6 @@
-import { Prisma } from 'generated/prisma/client';
+import type { User } from 'src/common/types/entities/user.type';
 
-export const createMockUser = (
-  overrides?: Partial<Prisma.UserGetPayload<object>>,
-): Prisma.UserGetPayload<object> => ({
+export const createMockUser = (overrides?: Partial<User>): User => ({
   id: 'user-id',
   email: 'test@example.com',
   name: 'Test User',

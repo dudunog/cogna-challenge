@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
-import { TaskStatus } from 'generated/prisma/client';
+import { TaskStatus } from 'src/common/types/enums/task-status.enum';
 
 export class CreateTaskDto {
   @IsString({ message: 'Title must be a string' })
