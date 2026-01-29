@@ -132,10 +132,10 @@ export default function TodoPage() {
 
         <Tabs value={period} onValueChange={(v) => setPeriod(v as PeriodTab)} className="mb-6">
           <TabsList>
-            <TabsTrigger value="today">Hoje</TabsTrigger>
-            <TabsTrigger value="yesterday">Ontem</TabsTrigger>
-            <TabsTrigger value="week">Semana</TabsTrigger>
-            <TabsTrigger value="month">Mês</TabsTrigger>
+            <TabsTrigger value="today" className="w-full">Hoje</TabsTrigger>
+            <TabsTrigger value="yesterday" className="w-full">Ontem</TabsTrigger>
+            <TabsTrigger value="week" className="w-full">Semana</TabsTrigger>
+            <TabsTrigger value="month" className="w-full">Mês</TabsTrigger>
           </TabsList>
           <TabsContent value="today" className="mt-0" />
           <TabsContent value="yesterday" className="mt-0" />

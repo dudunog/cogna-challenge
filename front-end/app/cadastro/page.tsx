@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,55 +17,23 @@ const PASSWORD_HINT = "Mínimo de 6 caracteres";
 
 export default function CadastroPage() {
   const router = useRouter();
+  const { register, isPending } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canSubmit =
     name.trim() !== "" && email.trim() !== "" && password.length >= 6;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    if (!name.trim() || !email.trim() || !password) {
-      toast.error("Nome, e-mail e senha são obrigatórios");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message ?? "Falha ao criar conta");
-        return;
-      }
-
+    const result = await register({ name, email, password });
+    if (result.success) {
       toast.success("Conta criada. Faça login.");
       router.push("/login");
       router.refresh();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao cadastrar");
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      toast.error(result.error);
     }
   }
 
@@ -96,7 +65,7 @@ export default function CadastroPage() {
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="name"
               />
             </div>
@@ -108,7 +77,7 @@ export default function CadastroPage() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="email"
               />
             </div>
@@ -120,7 +89,7 @@ export default function CadastroPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="new-password"
               />
               <p className="text-xs text-muted-foreground">{PASSWORD_HINT}</p>
@@ -128,9 +97,9 @@ export default function CadastroPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={!canSubmit || isSubmitting}
+              disabled={!canSubmit || isPending}
             >
-              {isSubmitting ? "Cadastrando…" : "Cadastrar"}
+              {isPending ? "Cadastrando…" : "Cadastrar"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
               Já tem conta?{" "}

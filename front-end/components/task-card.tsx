@@ -73,7 +73,7 @@ export function TaskCard({
         <Card
         size="sm"
         className={cn(
-          "cursor-grab active:cursor-grabbing transition-shadow",
+          "transition-shadow",
           isList && 'shadow-none ring-0 border-0 bg-sky-50/90 rounded-lg dark:bg-sky-950/40',
           isDragging && "opacity-50 shadow-lg",
           className
@@ -125,6 +125,7 @@ export function TaskCard({
           </div>
           <Button
             variant="destructive"
+            className="bg-transparent hover:bg-transparent"
             size="sm"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label="Excluir tarefa"

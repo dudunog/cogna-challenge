@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,46 +19,23 @@ import {
 
 import { ListTodo } from "lucide-react";
 
-
 export default function LoginPage() {
   const router = useRouter();
+  const { login, isPending } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canSubmit = email.trim() !== "" && password !== "";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim() || !password) {
-      toast.error("E-mail e senha são obrigatórios");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message ?? "Credenciais inválidas");
-        return;
-      }
-
+    const result = await login({ email, password });
+    if (result.success) {
       toast.success("Login realizado");
       router.push("/");
       router.refresh();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao entrar");
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      toast.error(result.error);
     }
   }
 
@@ -89,7 +67,7 @@ export default function LoginPage() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="email"
               />
             </div>
@@ -101,16 +79,16 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isSubmitting}
+                disabled={isPending}
                 autoComplete="current-password"
               />
             </div>
             <Button
               type="submit"
               className="w-full"
-              disabled={!canSubmit || isSubmitting}
+              disabled={!canSubmit || isPending}
             >
-              {isSubmitting ? "Entrando…" : "Entrar"}
+              {isPending ? "Entrando…" : "Entrar"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
               Não tem conta?{" "}
