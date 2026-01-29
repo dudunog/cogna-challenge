@@ -9,8 +9,8 @@ const DEFAULT_TASK_STATUS = TaskStatus.PENDING;
 export class CreateTaskUseCase {
   constructor(private readonly taskService: TaskService) {}
 
-  async execute(createTaskDto: CreateTaskDto) {
-    const { title, description, status, userId } = createTaskDto;
+  async execute(createTaskDto: CreateTaskDto, userId: string) {
+    const { title, description, status } = createTaskDto;
 
     const newTask = await this.taskService.create({
       data: {

@@ -12,8 +12,9 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Prisma, TaskStatus } from 'generated/prisma/client';
+import { TaskStatus } from 'generated/prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CreateTaskUseCase } from './use-cases/create-task.use-case';
@@ -35,92 +36,73 @@ export class TaskController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createTaskDto: CreateTaskDto) {
-    return this.createTaskUseCase.execute(createTaskDto);
+  async create(
+    @Body() createTaskDto: CreateTaskDto,
+    @CurrentUser() user: { id: string; email: string },
+  ) {
+    return this.createTaskUseCase.execute(createTaskDto, user.id);
   }
 
   @Get()
   async findAll(
+    @CurrentUser() user: { id: string; email: string },
     @Query('skip') skip?: string,
     @Query('take') take?: string,
-    @Query('userId') userId?: string,
     @Query('status') status?: string,
     @Query('orderBy') orderBy?: string,
     @Query('orderDirection') orderDirection?: 'asc' | 'desc',
   ) {
-    return this.listTasksUseCase.execute(
-      this.buildListParams({
-        skip,
-        take,
-        userId,
-        status,
-        orderBy,
-        orderDirection,
-      }),
-    );
-  }
+    const params: {
+      skip?: number;
+      take?: number;
+      where?: { status?: TaskStatus };
+      orderBy?: { [key: string]: 'asc' | 'desc' };
+    } = {};
 
-  private buildListParams(query: {
-    skip?: string;
-    take?: string;
-    userId?: string;
-    status?: string;
-    orderBy?: string;
-    orderDirection?: 'asc' | 'desc';
-  }): {
-    skip?: number;
-    take?: number;
-    where?: Prisma.TaskWhereInput;
-    orderBy?: Prisma.TaskOrderByWithRelationInput;
-  } {
-    const { skip, take, userId, status, orderBy, orderDirection } = query;
-
-    if (!skip && !take && !userId && !status && !orderBy && !orderDirection) {
-      return {};
+    if (skip) {
+      params.skip = parseInt(skip, 10);
     }
 
-    const where: Prisma.TaskWhereInput = {};
-
-    if (userId) {
-      where.userId = userId;
+    if (take) {
+      params.take = parseInt(take, 10);
     }
 
     if (status) {
-      where.status = status as TaskStatus;
+      params.where = { status: status as TaskStatus };
     }
 
-    let orderByInput;
-
     if (orderBy && orderDirection) {
-      orderByInput = {
+      params.orderBy = {
         [orderBy]: orderDirection,
       };
     }
 
-    return {
-      skip: skip ? parseInt(skip, 10) : undefined,
-      take: take ? parseInt(take, 10) : undefined,
-      where: Object.keys(where).length ? where : undefined,
-      orderBy: orderByInput,
-    };
+    return this.listTasksUseCase.execute(user.id, params);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.findTaskUseCase.execute(id);
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { id: string; email: string },
+  ) {
+    return this.findTaskUseCase.execute(id, user.id);
   }
 
   @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
+    @CurrentUser() user: { id: string; email: string },
   ) {
-    return this.updateTaskUseCase.execute(id, updateTaskDto);
+    return this.updateTaskUseCase.execute(id, updateTaskDto, user.id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.deleteTaskUseCase.execute(id);
+  async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: { id: string; email: string },
+  ) {
+    return this.deleteTaskUseCase.execute(id, user.id);
   }
 }
