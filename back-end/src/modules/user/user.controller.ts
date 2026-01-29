@@ -10,7 +10,9 @@ import {
   ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
+import type { CurrentUserPayload } from 'src/modules/auth/decorators/current-user.decorator';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SignUpUserUseCase } from './use-cases/sign-up-user.use-case';
@@ -31,10 +33,12 @@ export class UserController {
     return this.signUpUserUseCase.execute(signUpUserDto);
   }
 
-  @Get(':id')
+  @Get('me')
   @UseGuards(JwtAuthGuard)
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.findUserUseCase.execute(id);
+  async me(@CurrentUser() currentUser: CurrentUserPayload) {
+    const user = await this.findUserUseCase.execute(currentUser.id);
+
+    return { id: user.id, email: user.email, name: user.name };
   }
 
   @Put(':id')

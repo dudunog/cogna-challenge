@@ -90,7 +90,7 @@ describe('SignUpUserUseCase', () => {
 
         // Act & Assert
         await expect(useCase.execute(signUpUserDto)).rejects.toThrow(
-          'User with this email already exists',
+          'Já existe um usuário com este e-mail',
         );
         expect(mockUserService.findUnique).toHaveBeenCalledTimes(1);
         expect(mockUserService.create).not.toHaveBeenCalled();

@@ -52,12 +52,11 @@ export default function LoginPage() {
             </div>
             Taskk
           </Link>
-          <CardTitle className="text-xl">Entrar</CardTitle>
-          <CardDescription>
+          <CardDescription className="mt-3">
             Digite suas credenciais para acessar suas tarefas
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-1">
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">E-mail</Label>

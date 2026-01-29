@@ -16,12 +16,12 @@ export class UpdateTaskUseCase {
     });
 
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada`);
     }
 
     if (task.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this task',
+        'Você não tem permissão para atualizar esta tarefa',
       );
     }
 

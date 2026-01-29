@@ -17,7 +17,7 @@ export class SignUpUserUseCase {
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException('Já existe um usuário com este e-mail');
     }
 
     const hashedPassword = await hash(password, SALT_ROUNDS);

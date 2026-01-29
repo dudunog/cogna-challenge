@@ -11,7 +11,7 @@ export class FindUserUseCase {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
     }
 
     return user;

@@ -19,13 +19,13 @@ export class LoginUseCase {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Credenciais inválidas');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Credenciais inválidas');
     }
 
     const payload = {
@@ -40,6 +40,7 @@ export class LoginUseCase {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
       },
     };
   }

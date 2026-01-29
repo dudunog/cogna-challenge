@@ -109,7 +109,7 @@ describe('LoginUseCase', () => {
           UnauthorizedException,
         );
         await expect(useCase.execute(loginDto)).rejects.toThrow(
-          'Invalid credentials',
+          'Credenciais inválidas',
         );
         expect(bcrypt.compare).not.toHaveBeenCalled();
         expect(mockJwtService.sign).not.toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe('LoginUseCase', () => {
           UnauthorizedException,
         );
         await expect(useCase.execute(loginDto)).rejects.toThrow(
-          'Invalid credentials',
+          'Credenciais inválidas',
         );
         expect(mockJwtService.sign).not.toHaveBeenCalled();
       });

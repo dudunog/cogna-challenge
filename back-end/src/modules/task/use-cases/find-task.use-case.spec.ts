@@ -70,7 +70,7 @@ describe('FindTaskUseCase', () => {
           NotFoundException,
         );
         await expect(useCase.execute(taskId, userId)).rejects.toThrow(
-          `Task with ID ${taskId} not found`,
+          `Tarefa com ID ${taskId} não encontrada`,
         );
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(2);
       });

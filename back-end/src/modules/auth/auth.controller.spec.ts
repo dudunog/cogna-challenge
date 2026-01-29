@@ -63,12 +63,12 @@ describe('AuthController', () => {
         email: 'test@example.com',
         password: 'wrongpassword',
       };
-      const error = new Error('Invalid credentials');
+      const error = new Error('Credenciais inválidas');
       mockLoginUseCase.execute.mockRejectedValue(error);
 
       // Act & Assert
       await expect(controller.login(loginDto)).rejects.toThrow(
-        'Invalid credentials',
+        'Credenciais inválidas',
       );
       expect(mockLoginUseCase.execute).toHaveBeenCalledTimes(1);
       expect(mockLoginUseCase.execute).toHaveBeenCalledWith(loginDto);

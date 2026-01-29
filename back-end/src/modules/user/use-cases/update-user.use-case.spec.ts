@@ -87,7 +87,7 @@ describe('UpdateUserUseCase', () => {
           NotFoundException,
         );
         await expect(useCase.execute(userId, updateUserDto)).rejects.toThrow(
-          `User with ID ${userId} not found`,
+          `Usuário com ID ${userId} não encontrado`,
         );
         expect(mockUserService.findUnique).toHaveBeenCalledTimes(2);
         expect(mockUserService.update).not.toHaveBeenCalled();

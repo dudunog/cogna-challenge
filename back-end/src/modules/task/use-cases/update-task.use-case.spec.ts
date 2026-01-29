@@ -90,7 +90,7 @@ describe('UpdateTaskUseCase', () => {
         ).rejects.toThrow(NotFoundException);
         await expect(
           useCase.execute(taskId, updateTaskDto, userId),
-        ).rejects.toThrow(`Task with ID ${taskId} not found`);
+        ).rejects.toThrow(`Tarefa com ID ${taskId} não encontrada`);
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(2);
         expect(mockTaskService.update).not.toHaveBeenCalled();
       });
