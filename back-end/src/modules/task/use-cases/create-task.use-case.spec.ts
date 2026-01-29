@@ -41,20 +41,20 @@ describe('CreateTaskUseCase', () => {
     describe('successful creation', () => {
       it('should create task with default status PENDING when status is not provided', async () => {
         // Arrange
+        const userId = 'user-id';
         const createTaskDto: CreateTaskDto = {
           title: 'Test Task',
           description: 'Test Description',
-          userId: 'user-id',
         };
         const expectedTask = createMockTask({
           title: createTaskDto.title,
           description: createTaskDto.description,
-          userId: createTaskDto.userId,
+          userId,
         });
         mockTaskService.create.mockResolvedValue(expectedTask);
 
         // Act
-        const result = await useCase.execute(createTaskDto);
+        const result = await useCase.execute(createTaskDto, userId);
 
         // Assert
         expect(mockTaskService.create).toHaveBeenCalledTimes(1);
@@ -65,7 +65,7 @@ describe('CreateTaskUseCase', () => {
             status: TaskStatus.PENDING,
             user: {
               connect: {
-                id: createTaskDto.userId,
+                id: userId,
               },
             },
           },
@@ -76,22 +76,22 @@ describe('CreateTaskUseCase', () => {
 
       it('should create task with provided status when status is provided', async () => {
         // Arrange
+        const userId = 'user-id';
         const createTaskDto: CreateTaskDto = {
           title: 'Test Task',
           description: 'Test Description',
           status: TaskStatus.IN_PROGRESS,
-          userId: 'user-id',
         };
         const expectedTask = createMockTask({
           title: createTaskDto.title,
           description: createTaskDto.description,
           status: createTaskDto.status,
-          userId: createTaskDto.userId,
+          userId,
         });
         mockTaskService.create.mockResolvedValue(expectedTask);
 
         // Act
-        const result = await useCase.execute(createTaskDto);
+        const result = await useCase.execute(createTaskDto, userId);
 
         // Assert
         expect(mockTaskService.create).toHaveBeenCalledTimes(1);
@@ -102,7 +102,7 @@ describe('CreateTaskUseCase', () => {
             status: TaskStatus.IN_PROGRESS,
             user: {
               connect: {
-                id: createTaskDto.userId,
+                id: userId,
               },
             },
           },
@@ -115,16 +115,16 @@ describe('CreateTaskUseCase', () => {
     describe('error handling', () => {
       it('should propagate database errors', async () => {
         // Arrange
+        const userId = 'user-id';
         const createTaskDto: CreateTaskDto = {
           title: 'Test Task',
           description: 'Test Description',
-          userId: 'user-id',
         };
         const error = new Error('Database connection failed');
         mockTaskService.create.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(createTaskDto)).rejects.toThrow(
+        await expect(useCase.execute(createTaskDto, userId)).rejects.toThrow(
           'Database connection failed',
         );
         expect(mockTaskService.create).toHaveBeenCalledTimes(1);

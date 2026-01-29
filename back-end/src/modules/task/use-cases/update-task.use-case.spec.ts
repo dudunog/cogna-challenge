@@ -44,6 +44,7 @@ describe('UpdateTaskUseCase', () => {
       it('should update task and return updated task data', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const updateTaskDto: UpdateTaskDto = {
           title: 'Updated Task',
         };
@@ -56,7 +57,7 @@ describe('UpdateTaskUseCase', () => {
         mockTaskService.update.mockResolvedValue(updatedTask);
 
         // Act
-        const result = await useCase.execute(taskId, updateTaskDto);
+        const result = await useCase.execute(taskId, updateTaskDto, userId);
 
         // Assert
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);
@@ -77,18 +78,19 @@ describe('UpdateTaskUseCase', () => {
       it('should throw NotFoundException', async () => {
         // Arrange
         const taskId = 'non-existent-id';
+        const userId = 'user-id';
         const updateTaskDto: UpdateTaskDto = {
           title: 'Updated Task',
         };
         mockTaskService.findUnique.mockResolvedValue(null);
 
         // Act & Assert
-        await expect(useCase.execute(taskId, updateTaskDto)).rejects.toThrow(
-          NotFoundException,
-        );
-        await expect(useCase.execute(taskId, updateTaskDto)).rejects.toThrow(
-          `Task with ID ${taskId} not found`,
-        );
+        await expect(
+          useCase.execute(taskId, updateTaskDto, userId),
+        ).rejects.toThrow(NotFoundException);
+        await expect(
+          useCase.execute(taskId, updateTaskDto, userId),
+        ).rejects.toThrow(`Task with ID ${taskId} not found`);
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(2);
         expect(mockTaskService.update).not.toHaveBeenCalled();
       });
@@ -98,6 +100,7 @@ describe('UpdateTaskUseCase', () => {
       it('should propagate database errors from update', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const updateTaskDto: UpdateTaskDto = {
           title: 'Updated Task',
         };
@@ -107,9 +110,9 @@ describe('UpdateTaskUseCase', () => {
         mockTaskService.update.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(taskId, updateTaskDto)).rejects.toThrow(
-          'Database connection failed',
-        );
+        await expect(
+          useCase.execute(taskId, updateTaskDto, userId),
+        ).rejects.toThrow('Database connection failed');
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);
         expect(mockTaskService.update).toHaveBeenCalledTimes(1);
       });

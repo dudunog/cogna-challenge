@@ -41,11 +41,12 @@ describe('FindTaskUseCase', () => {
       it('should return task data', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const expectedTask = createMockTask({ id: taskId });
         mockTaskService.findUnique.mockResolvedValue(expectedTask);
 
         // Act
-        const result = await useCase.execute(taskId);
+        const result = await useCase.execute(taskId, userId);
 
         // Assert
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);
@@ -61,13 +62,14 @@ describe('FindTaskUseCase', () => {
       it('should throw NotFoundException', async () => {
         // Arrange
         const taskId = 'non-existent-id';
+        const userId = 'user-id';
         mockTaskService.findUnique.mockResolvedValue(null);
 
         // Act & Assert
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           NotFoundException,
         );
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           `Task with ID ${taskId} not found`,
         );
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(2);
@@ -78,11 +80,12 @@ describe('FindTaskUseCase', () => {
       it('should propagate database errors', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const error = new Error('Database connection failed');
         mockTaskService.findUnique.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           'Database connection failed',
         );
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);

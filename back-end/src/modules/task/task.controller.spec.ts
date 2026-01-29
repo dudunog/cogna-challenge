@@ -72,10 +72,10 @@ describe('TaskController', () => {
   describe('create', () => {
     it('should delegate to create task use case and return created task', async () => {
       // Arrange
+      const user = { id: 'user-id', email: 'test@example.com' };
       const createTaskDto: CreateTaskDto = {
         title: 'Test Task',
         description: 'Test Description',
-        userId: 'user-id',
       };
       const expectedTask = {
         id: 'task-id',
@@ -85,11 +85,14 @@ describe('TaskController', () => {
       mockCreateTaskUseCase.execute.mockResolvedValue(expectedTask);
 
       // Act
-      const result = await controller.create(createTaskDto);
+      const result = await controller.create(createTaskDto, user);
 
       // Assert
       expect(mockCreateTaskUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(mockCreateTaskUseCase.execute).toHaveBeenCalledWith(createTaskDto);
+      expect(mockCreateTaskUseCase.execute).toHaveBeenCalledWith(
+        createTaskDto,
+        user.id,
+      );
       expect(result).toEqual(expectedTask);
     });
   });
@@ -97,6 +100,7 @@ describe('TaskController', () => {
   describe('findAll', () => {
     it('should delegate to list tasks use case and return array of tasks', async () => {
       // Arrange
+      const user = { id: 'user-id', email: 'test@example.com' };
       const expectedTasks = [
         {
           id: 'task-id-1',
@@ -112,11 +116,11 @@ describe('TaskController', () => {
       mockListTasksUseCase.execute.mockResolvedValue(expectedTasks);
 
       // Act
-      const result = await controller.findAll();
+      const result = await controller.findAll(user);
 
       // Assert
       expect(mockListTasksUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(mockListTasksUseCase.execute).toHaveBeenCalledWith({});
+      expect(mockListTasksUseCase.execute).toHaveBeenCalledWith(user.id, {});
       expect(result).toEqual(expectedTasks);
     });
   });
@@ -124,6 +128,7 @@ describe('TaskController', () => {
   describe('findOne', () => {
     it('should delegate to find task use case and return task', async () => {
       // Arrange
+      const user = { id: 'user-id', email: 'test@example.com' };
       const taskId = 'task-id';
       const expectedTask = {
         id: taskId,
@@ -133,11 +138,11 @@ describe('TaskController', () => {
       mockFindTaskUseCase.execute.mockResolvedValue(expectedTask);
 
       // Act
-      const result = await controller.findOne(taskId);
+      const result = await controller.findOne(taskId, user);
 
       // Assert
       expect(mockFindTaskUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(mockFindTaskUseCase.execute).toHaveBeenCalledWith(taskId);
+      expect(mockFindTaskUseCase.execute).toHaveBeenCalledWith(taskId, user.id);
       expect(result).toEqual(expectedTask);
     });
   });
@@ -145,6 +150,7 @@ describe('TaskController', () => {
   describe('update', () => {
     it('should delegate to update task use case and return updated task', async () => {
       // Arrange
+      const user = { id: 'user-id', email: 'test@example.com' };
       const taskId = 'task-id';
       const updateTaskDto: UpdateTaskDto = {
         title: 'Updated Task',
@@ -156,13 +162,14 @@ describe('TaskController', () => {
       mockUpdateTaskUseCase.execute.mockResolvedValue(expectedTask);
 
       // Act
-      const result = await controller.update(taskId, updateTaskDto);
+      const result = await controller.update(taskId, updateTaskDto, user);
 
       // Assert
       expect(mockUpdateTaskUseCase.execute).toHaveBeenCalledTimes(1);
       expect(mockUpdateTaskUseCase.execute).toHaveBeenCalledWith(
         taskId,
         updateTaskDto,
+        user.id,
       );
       expect(result).toEqual(expectedTask);
     });
@@ -171,15 +178,19 @@ describe('TaskController', () => {
   describe('delete', () => {
     it('should delegate to delete task use case', async () => {
       // Arrange
+      const user = { id: 'user-id', email: 'test@example.com' };
       const taskId = 'task-id';
       mockDeleteTaskUseCase.execute.mockResolvedValue(undefined);
 
       // Act
-      const result = await controller.delete(taskId);
+      const result = await controller.delete(taskId, user);
 
       // Assert
       expect(mockDeleteTaskUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(mockDeleteTaskUseCase.execute).toHaveBeenCalledWith(taskId);
+      expect(mockDeleteTaskUseCase.execute).toHaveBeenCalledWith(
+        taskId,
+        user.id,
+      );
       expect(result).toBeUndefined();
     });
   });

@@ -43,13 +43,14 @@ describe('DeleteTaskUseCase', () => {
       it('should delete task and return deleted task data', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const existingTask = createMockTask({ id: taskId });
         const deletedTask = createMockTask({ id: taskId });
         mockTaskService.findUnique.mockResolvedValue(existingTask);
         mockTaskService.delete.mockResolvedValue(deletedTask);
 
         // Act
-        const result = await useCase.execute(taskId);
+        const result = await useCase.execute(taskId, userId);
 
         // Assert
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);
@@ -69,13 +70,14 @@ describe('DeleteTaskUseCase', () => {
       it('should throw NotFoundException', async () => {
         // Arrange
         const taskId = 'non-existent-id';
+        const userId = 'user-id';
         mockTaskService.findUnique.mockResolvedValue(null);
 
         // Act & Assert
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           NotFoundException,
         );
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           `Task with ID ${taskId} not found`,
         );
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(2);
@@ -87,13 +89,14 @@ describe('DeleteTaskUseCase', () => {
       it('should propagate database errors from delete', async () => {
         // Arrange
         const taskId = 'task-id';
+        const userId = 'user-id';
         const existingTask = createMockTask({ id: taskId });
         const error = new Error('Database connection failed');
         mockTaskService.findUnique.mockResolvedValue(existingTask);
         mockTaskService.delete.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute(taskId)).rejects.toThrow(
+        await expect(useCase.execute(taskId, userId)).rejects.toThrow(
           'Database connection failed',
         );
         expect(mockTaskService.findUnique).toHaveBeenCalledTimes(1);

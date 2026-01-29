@@ -39,21 +39,24 @@ describe('ListTasksUseCase', () => {
     describe('when tasks exist', () => {
       it('should return array of tasks', async () => {
         // Arrange
+        const userId = 'user-id';
         const params = {
           skip: 0,
           take: 10,
-          where: { userId: 'user-id' },
           orderBy: { createdAt: 'desc' as const },
         };
         const expectedTasks = [createMockTask()];
         mockTaskService.findMany.mockResolvedValue(expectedTasks);
 
         // Act
-        const result = await useCase.execute(params);
+        const result = await useCase.execute(userId, params);
 
         // Assert
         expect(mockTaskService.findMany).toHaveBeenCalledTimes(1);
-        expect(mockTaskService.findMany).toHaveBeenCalledWith(params);
+        expect(mockTaskService.findMany).toHaveBeenCalledWith({
+          ...params,
+          where: { userId },
+        });
         expect(result).toEqual(expectedTasks);
         expect(result).toHaveLength(1);
       });
@@ -62,26 +65,30 @@ describe('ListTasksUseCase', () => {
     describe('when no tasks match', () => {
       it('should return empty array', async () => {
         // Arrange
+        const userId = 'user-id';
         mockTaskService.findMany.mockResolvedValue([]);
 
         // Act
-        const result = await useCase.execute({});
+        const result = await useCase.execute(userId, {});
 
         // Assert
         expect(result).toEqual([]);
         expect(result).toHaveLength(0);
-        expect(mockTaskService.findMany).toHaveBeenCalledWith({});
+        expect(mockTaskService.findMany).toHaveBeenCalledWith({
+          where: { userId },
+        });
       });
     });
 
     describe('error handling', () => {
       it('should propagate database errors', async () => {
         // Arrange
+        const userId = 'user-id';
         const error = new Error('Database connection failed');
         mockTaskService.findMany.mockRejectedValue(error);
 
         // Act & Assert
-        await expect(useCase.execute({})).rejects.toThrow(
+        await expect(useCase.execute(userId, {})).rejects.toThrow(
           'Database connection failed',
         );
         expect(mockTaskService.findMany).toHaveBeenCalledTimes(1);

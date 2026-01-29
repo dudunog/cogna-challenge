@@ -6,14 +6,25 @@ import { Prisma } from 'generated/prisma/client';
 export class ListTasksUseCase {
   constructor(private readonly taskService: TaskService) {}
 
-  async execute(params?: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.TaskWhereUniqueInput;
-    where?: Prisma.TaskWhereInput;
-    orderBy?: Prisma.TaskOrderByWithRelationInput;
-    include?: Prisma.TaskInclude;
-  }) {
-    return this.taskService.findMany(params ?? {});
+  async execute(
+    userId: string,
+    params?: {
+      skip?: number;
+      take?: number;
+      cursor?: Prisma.TaskWhereUniqueInput;
+      where?: Prisma.TaskWhereInput;
+      orderBy?: Prisma.TaskOrderByWithRelationInput;
+      include?: Prisma.TaskInclude;
+    },
+  ) {
+    const where: Prisma.TaskWhereInput = {
+      userId,
+      ...params?.where,
+    };
+
+    return this.taskService.findMany({
+      ...params,
+      where,
+    });
   }
 }
