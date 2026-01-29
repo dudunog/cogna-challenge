@@ -35,7 +35,7 @@ Cada tarefa possui:
 
 ### GitHub Actions
 
-- Workflow no back-end: **lint**, **testes** e **build**
+- Pipeline no back-end
 
 ---
 
