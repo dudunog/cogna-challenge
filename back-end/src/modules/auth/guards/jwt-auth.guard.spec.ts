@@ -16,12 +16,12 @@ describe('JwtAuthGuard', () => {
   });
 
   it('should have canActivate method inherited from AuthGuard', () => {
-    expect(guard.canActivate).toBeDefined();
-    expect(typeof guard.canActivate).toBe('function');
+    expect(guard['canActivate']).toBeDefined();
+    expect(typeof guard['canActivate']).toBe('function');
   });
 
   it('should have handleRequest method inherited from AuthGuard', () => {
-    expect(guard.handleRequest).toBeDefined();
-    expect(typeof guard.handleRequest).toBe('function');
+    expect(guard['handleRequest']).toBeDefined();
+    expect(typeof guard['handleRequest']).toBe('function');
   });
 });
