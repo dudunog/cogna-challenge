@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Taskk",
-  description: "Task management app",
+  title: "Taskk App",
+  description: "Aplicativo de gerenciamento de tarefas",
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="pt-BR" className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen antialiased font-sans">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}

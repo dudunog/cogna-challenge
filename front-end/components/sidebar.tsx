@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ListTodo, LogOut, Search, Mic } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import { cn } from "@/lib/utils";
 
+import { ListTodo, LogOut } from "lucide-react";
+
 const navItems = [
-  { href: "/", label: "To do list", icon: ListTodo },
+  { href: "/", label: "Lista de tarefas", icon: ListTodo },
 ];
 
 const footerItems = [
-  { href: "/logout", label: "Log out", icon: LogOut },
+  { href: "/logout", label: "Sair", icon: LogOut },
 ];
 
 export function Sidebar() {
@@ -26,15 +27,6 @@ export function Sidebar() {
           </div>
           Taskk
         </Link>
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search"
-            className="h-9 bg-muted pl-8 pr-8"
-            aria-label="Search"
-          />
-          <Mic className="absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-        </div>
         <nav className="flex flex-1 flex-col gap-1">
           {navItems.map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
